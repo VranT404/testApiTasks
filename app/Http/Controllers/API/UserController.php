@@ -20,10 +20,6 @@ class UserController extends Controller
         try {
             $users = User::orderBy('id', 'desc')->get();
 
-            if ($users->isEmpty()) {
-                return response()->json(['response' => 'No users'], 404);
-            }
-
             return response()->json(['users' => $users], 200);
         } catch (\Exception $e) {
             return response()->json(['response' => 'Error: ' . $e->getMessage()], 503);
@@ -41,10 +37,6 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($userId);
 
-            if ($user->isEmpty()) {
-                return response()->json(['response' => 'Could not find user for this id'], 404);
-            }
-
             return response()->json(['user' => $user], 200);
         } catch (\Exception $e) {
             return response()->json(['response' => 'Error: ' . $e->getMessage()], 503);
@@ -61,6 +53,7 @@ class UserController extends Controller
     {
         try {
             $authController = new AuthController;
+
             $user = $authController->register($request);
 
             return response()->json(['user' => $user, 'message' => 'User created successfully'], 200);
@@ -124,10 +117,6 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($userId);
-
-            if ($user->isEmpty()) {
-                return response()->json(['response' => 'Could not find user for this id'], 404);
-            }
 
             $user->delete();
 

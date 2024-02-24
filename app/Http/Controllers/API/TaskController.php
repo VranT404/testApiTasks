@@ -19,10 +19,6 @@ class TaskController extends Controller
         try {
             $tasks = Task::orderBy('id', 'asc')->get();
 
-            if ($tasks->isEmpty()) {
-                return response()->json(['response' => 'No tasks'], 404);
-            }
-
             return response()->json(['tasks' => $tasks], 200);
         } catch (\Exception $e) {
             return response()->json(['response' => 'Error: ' . $e->getMessage()], 503);
@@ -39,10 +35,6 @@ class TaskController extends Controller
     {
         try {
             $task = Task::findOrFail($taskId);
-
-            if (!$task) {
-                return response()->json(['response' => 'Could not find task for this id'], 404);
-            }
 
             return response()->json(['task' => $task], 200);
         } catch (\Exception $e) {
@@ -69,10 +61,6 @@ class TaskController extends Controller
 
         try {
             $tasks = Task::where('user_id', $user->id)->get();
-
-            if ($tasks->isEmpty()) {
-                return response()->json(['response' => 'You don\'t have tasks yet'], 404);
-            }
 
             return response()->json(['tasks' => $tasks], 200);
         } catch (\Exception $e) {
@@ -124,8 +112,6 @@ class TaskController extends Controller
      */
     public function update(Request $request, $taskId)
     {
-        $task = Task::findOrFail($taskId);
-
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'description' => 'nullable',
@@ -141,6 +127,8 @@ class TaskController extends Controller
         }
 
         try {
+            $task = Task::findOrFail($taskId);
+
             $task->update([
                 'title' => $request->title,
                 'description' => $request->description,
@@ -163,10 +151,6 @@ class TaskController extends Controller
     {
         try {
             $task = Task::findOrFail($taskId);
-
-            if (!$task) {
-                return response()->json(['response' => 'Could not find task for this id'], 404);
-            }
 
             $task->delete();
 
